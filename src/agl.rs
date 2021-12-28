@@ -1,8 +1,4 @@
-use csv_macros::csv_file;
-
-type TwoField = (&'static str, &'static str);
-
-pub const GLYPH_LIST: &[TwoField] = csv_file!("maps/glyphlist.txt");
+include!(concat!(env!("OUT_DIR"), "/glyphlist.rs"));
 
 pub fn map_glyph_to_string(glyph_name: &str) -> String {
     // drop any chars after dot
@@ -14,13 +10,7 @@ pub fn map_glyph_to_string(glyph_name: &str) -> String {
 }
 
 fn map_agl(component: &str) -> Option<String> {
-    GLYPH_LIST.iter().find_map(|&(name, code)| {
-        if component == name {
-            unicode(code).map(|c| c.to_string())
-        } else {
-            None
-        }
-    })
+    GLYPH_LIST.get(component).map(|c| c.to_string())
 }
 
 fn map_uni(component: &str) -> Option<String> {

@@ -2,8 +2,14 @@
 name = "which-codepoint"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+anyhow = "1.0"
+csv = "1.1"
+phf_codegen = "0.10"
 
 [dependencies]
 gumdrop = "0.8"
@@ -12,5 +18,4 @@ thiserror = "1.0"
 allsorts = "0.6"
 tracing = "0.1"
 tracing-subscriber = "0.1"
-
-csv-macros = { path = "csv-macros" }
+phf = "0.10"
