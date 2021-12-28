@@ -28,7 +28,10 @@ fn create_maps() -> anyhow::Result<()> {
     }
     let map = builder.build();
 
-    let map_tokens: TokenStream = map.to_string().parse().unwrap();
+    let map_tokens: TokenStream = map
+        .to_string()
+        .parse()
+        .map_err(|_| anyhow::anyhow!("Could not parse DisplayMap as TokenStream"))?;
 
     let output = quote! {
         static GLYPH_LIST: phf::Map<&'static str, &'static str> = #map_tokens;
