@@ -1,19 +1,20 @@
+use csv::ReaderBuilder;
+use proc_macro2::TokenStream;
+use proc_quote::quote;
 use std::env;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
 
-use csv::ReaderBuilder;
-
 fn main() -> anyhow::Result<()> {
-    let path = Path::new(&env::var("OUT_DIR")?).join("glyphlist.rs");
-    let mut file = BufWriter::new(File::create(&path)?);
+    println!("cargo:rerun-if-changed=build.rs");
 
-    write!(
-        &mut file,
-        "static GLYPH_LIST: phf::Map<&'static str, &'static str> = "
-    )?;
+    create_maps()?;
 
+    Ok(())
+}
+
+fn create_maps() -> anyhow::Result<()> {
     let mut reader = ReaderBuilder::new()
         .delimiter(b';')
         .comment(Some(b'#'))
@@ -27,8 +28,17 @@ fn main() -> anyhow::Result<()> {
     }
     let map = builder.build();
 
-    write!(&mut file, "{}", map)?;
-    writeln!(&mut file, ";")?;
+    let map_tokens: TokenStream = map.to_string().parse().unwrap();
+
+    let output = quote! {
+        static GLYPH_LIST: phf::Map<&'static str, &'static str> = #map_tokens;
+    };
+
+    let output = output.to_string();
+
+    let path = Path::new(&env::var("OUT_DIR")?).join("glyphlist.rs");
+    let mut file = BufWriter::new(File::create(&path)?);
+    writeln!(&mut file, "{}", output)?;
 
     Ok(())
 }
