@@ -18,7 +18,8 @@ pub fn map_from_csv_impl<A: Into<ImplArgs>>(args: A) -> TokenStream {
 
     let mut builder = phf_codegen::Map::new();
     for (key, value) in records {
-        builder.entry(key, &format!(r#""{}""#, value));
+        let quoted_value = &format!("{:?}", value);
+        builder.entry(key, quoted_value);
     }
     let map = builder.build();
 
