@@ -1,6 +1,6 @@
+use cpdump_macros_impl::{map_from_csv_impl, ImplArgs};
 use proc_macro::TokenStream;
 use syn::{parse::Parse, parse_macro_input, spanned::Spanned};
-use wcp_macros_impl::{map_from_csv_impl, ImplArgs};
 
 struct Args {
     path: String,

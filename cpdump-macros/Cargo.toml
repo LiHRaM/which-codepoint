@@ -1,5 +1,5 @@
 [package]
-name = "wcp-macros-impl"
+name = "cpdump-macros"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,6 +7,10 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0"
-csv = "1.1"
-phf_codegen = "0.10"
 proc-macro2 = "1.0.36"
+syn = "1.0.84"
+
+cpdump-macros-impl = { path = "../cpdump-macros-impl" }
+
+[lib]
+proc-macro = true

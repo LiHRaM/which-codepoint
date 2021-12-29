@@ -11,8 +11,8 @@ use allsorts::{
 };
 use gumdrop::Options;
 use std::{convert, fmt::Debug};
-use tracing::{info, Level};
-use tracing_subscriber::FmtSubscriber;
+use tracing::{debug, info};
+use tracing_subscriber::{EnvFilter, FmtSubscriber};
 
 #[derive(Debug, Options)]
 struct Cli {
@@ -24,29 +24,20 @@ struct Cli {
 }
 
 fn main() -> anyhow::Result<()> {
-    let subscriber = FmtSubscriber::builder()
-        .with_max_level(Level::TRACE)
-        .finish();
+    let filter = EnvFilter::try_from_env("LOG_LEVEL").unwrap_or_else(|_| EnvFilter::new("info"));
+    let subscriber = FmtSubscriber::builder().with_env_filter(filter).finish();
 
     tracing::subscriber::set_global_default(subscriber)?;
 
-    info!("Parsing args");
     let cli = Cli::parse_args_default_or_exit();
 
-    dump_info(cli)
+    dump_codepoints(cli)
 }
 
-fn dump_info(cli: Cli) -> anyhow::Result<()> {
-    info!("Load into buffer");
+fn dump_codepoints(cli: Cli) -> anyhow::Result<()> {
     let buffer = std::fs::read(&cli.path)?;
-
-    info!("Setting ReadScope");
     let scope = ReadScope::new(&buffer);
-
-    info!("Parse file");
     let font_file = scope.read::<FontData>()?;
-
-    info!("Get table provider");
     let table_provider = font_file.table_provider(0)?;
 
     let table = table_provider
@@ -75,12 +66,18 @@ fn dump_info(cli: Cli) -> anyhow::Result<()> {
     }
 
     let names = GlyphNames::new(&cmap_subtable, post_data);
+    let mut dropped_points = 0usize;
     for glyph_id in 0..maxp.num_glyphs {
         let name = names.glyph_name(glyph_id);
         let points = map_glyph_to_code_points(&name);
+        if points.is_empty() {
+            dropped_points += 1;
+        }
         let string = map_code_points_to_string(&points).unwrap_or_default();
-        println!("{}: {} - {:?} - {}", glyph_id, name, points, string);
+        debug!("{}: {} - {:?} - {}", glyph_id, name, points, string);
     }
+
+    info!("Dropped points: {}", dropped_points);
 
     Ok(())
 }

@@ -1,4 +1,4 @@
-use wcp_macros::map_from_csv;
+use cpdump_macros::map_from_csv;
 
 static GLYPH_LIST: phf::Map<&'static str, &'static str> = map_from_csv!("maps/glyphlist.txt");
 
