@@ -1,0 +1,25 @@
+{
+    "store_source": false,
+    "default_search_fields": [
+        "name",
+        "unicode",
+        "font_name"
+    ],
+    "field_mappings": [
+        {
+            "name": "font_name",
+            "type": "text",
+            "tokenizer": "raw"
+        },
+        {
+            "name": "name",
+            "type": "text",
+            "tokenizer": "raw"
+        },
+        {
+            "name": "unicode",
+            "type": "array<text>",
+            "tokenizer": "raw"
+        }
+    ]
+}

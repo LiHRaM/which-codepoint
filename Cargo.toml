@@ -10,5 +10,7 @@ allsorts = "0.6"
 tracing = "0.1"
 tracing-subscriber = "0.1"
 phf = "0.10"
+json = "0.12.4"
+encoding_rs = "0.8.30"
 
 cpdump-macros = { path = "cpdump-macros" }

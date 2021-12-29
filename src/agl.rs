@@ -11,14 +11,6 @@ pub fn map_glyph_to_code_points(glyph_name: &str) -> Vec<&str> {
     split.into_iter().map(step3).flatten().collect()
 }
 
-pub fn map_code_points_to_string(points: &[&str]) -> Option<String> {
-    points.iter().copied().map(parse_unicode).collect()
-}
-
-fn parse_unicode(input: &str) -> Option<char> {
-    u32::from_str_radix(input, 16).ok().and_then(char::from_u32)
-}
-
 fn map_agl(component: &str) -> Option<&str> {
     GLYPH_LIST.get(component).copied()
 }
