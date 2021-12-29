@@ -1,4 +1,6 @@
-include!(concat!(env!("OUT_DIR"), "/glyphlist.rs"));
+use wcp_macros::map_from_csv;
+
+static GLYPH_LIST: phf::Map<&'static str, &'static str> = map_from_csv!("maps/glyphlist.txt");
 
 pub fn map_glyph_to_string(glyph_name: &str) -> String {
     // drop any chars after dot
