@@ -1,6 +1,6 @@
 mod agl;
 
-use agl::map_glyph_to_string;
+use agl::{map_code_points_to_string, map_glyph_to_code_points};
 use allsorts::{
     binary::read::ReadScope,
     font::{read_cmap_subtable, Encoding},
@@ -77,7 +77,9 @@ fn dump_info(cli: Cli) -> anyhow::Result<()> {
     let names = GlyphNames::new(&cmap_subtable, post_data);
     for glyph_id in 0..maxp.num_glyphs {
         let name = names.glyph_name(glyph_id);
-        println!("{}: {} - {}", glyph_id, name, map_glyph_to_string(&name));
+        let points = map_glyph_to_code_points(&name);
+        let string = map_code_points_to_string(&points).unwrap_or_default();
+        println!("{}: {} - {:?} - {}", glyph_id, name, points, string);
     }
 
     Ok(())
